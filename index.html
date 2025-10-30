@@ -1,0 +1,1550 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Dashboard</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(75, 85, 99, 0.5);
+        }
+        .service-row:hover {
+            background-color: #f8fafc;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .status-deployed .status-dot {
+            background-color: #10b981;
+        }
+        .status-failed .status-dot {
+            background-color: #ef4444;
+        }
+        .filter-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .filter-tab:not(.active):hover {
+            background-color: #f1f5f9;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="bg-gray-50 h-full">
+  <div class="flex h-full"><!-- Sidebar -->
+   <div class="w-64 bg-gray-900 border-r border-gray-700 flex flex-col"><!-- Header -->
+    <div class="p-4 border-b border-gray-700">
+     <h1 id="workspace-title" class="text-lg font-semibold text-white">SkyStack</h1>
+     <div class="mt-2"><button class="text-sm text-blue-400 hover:text-blue-300">Projects</button>
+     </div>
+    </div><!-- Search -->
+    <div class="p-4 border-b border-gray-700">
+     <div class="relative"><input type="text" placeholder="Search" class="w-full pl-3 pr-8 py-2 bg-gray-800 border border-gray-600 rounded-md text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <span class="absolute right-3 top-2 text-xs text-gray-400">Ctrl+K</span>
+     </div>
+    </div><!-- New Button -->
+    <div class="p-4 border-b border-gray-700 space-y-2">
+     <div class="relative"><button id="new-button" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-between"> New 
+       <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+       </svg></button>
+      <div id="new-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg z-50 hidden">
+       <div class="py-1"><a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Static Site</a> <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Web Service</a> <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Private Service</a> <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Background Worker</a> <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Cron Job</a>
+        <div class="border-t border-gray-600 my-1"></div><a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Postgres</a> <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Key Value</a>
+        <div class="border-t border-gray-600 my-1"></div><a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Project</a> <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Blueprint</a>
+       </div>
+      </div>
+     </div><button id="upgrade-button" class="w-full bg-purple-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade </button>
+    </div><!-- Navigation -->
+    <nav class="flex-1 p-4">
+     <ul class="space-y-1">
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="services">Projects</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="blueprints">Blueprints</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="environment-groups">Environment Groups</a></li>
+      <li><a href="#" class="sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white">Integrations</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="observability">Observability</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="webhooks">Webhooks</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="notifications">Notifications</a></li>
+      <li><a href="#" class="sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white">Networking</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="private-links">Private Links</a></li>
+      <li><a href="#" class="sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white">Workspace</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="billing">Billing</a></li>
+      <li><a href="#" class="nav-link sidebar-item block px-3 py-2 text-sm text-gray-300 rounded-md hover:text-white" data-section="settings">Settings</a></li>
+     </ul>
+    </nav><!-- Footer -->
+    <div class="p-4 border-t border-gray-700 space-y-2"><a href="#" class="nav-link block text-sm text-gray-400 hover:text-white" data-section="changelog">Changelog</a> <a href="#" class="block text-sm text-gray-400 hover:text-white">Invite a friend</a> <a href="#" class="nav-link block text-sm text-gray-400 hover:text-white" data-section="contact-support">Contact support</a> <a href="#" class="block text-sm text-gray-400 hover:text-white">SkyStack Status</a>
+    </div>
+   </div><!-- Main Content -->
+   <div class="flex-1 flex flex-col"><!-- Top Bar -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+       <h2 class="text-xl font-semibold text-gray-900">Overview</h2>
+      </div>
+      <div class="flex items-center space-x-3"><button class="text-sm text-blue-600 hover:text-blue-700">Invite your team</button> <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Add new </button>
+      </div>
+     </div>
+    </div><!-- Content Area -->
+    <div class="flex-1 p-6"><!-- Projects Section -->
+     <div class="mb-8">
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+       <h3 class="text-lg font-semibold text-gray-900 mb-2">Projects</h3>
+       <p id="welcome-message" class="text-gray-600 mb-4">Get organized with Projects</p>
+       <p class="text-sm text-gray-500 mb-4">An easier way to organize your resources and collaborate with team members.</p>
+       <div class="flex space-x-3"><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Create your first project </button> <button class="text-blue-600 text-sm hover:text-blue-700"> Learn more </button>
+       </div>
+      </div>
+     </div><!-- Dynamic Content Area -->
+     <div id="content-area"><!-- Services Section (default) -->
+      <div id="services-section">
+       <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Ungrouped Services</h3>
+       </div><!-- Filter Tabs -->
+       <div class="flex space-x-1 mb-4"><button class="filter-tab active px-3 py-1 rounded-md text-sm font-medium transition-colors" data-filter="all"> all (10) </button> <button class="filter-tab px-3 py-1 rounded-md text-sm font-medium transition-colors" data-filter="active"> active (2) </button> <button class="filter-tab px-3 py-1 rounded-md text-sm font-medium transition-colors" data-filter="suspended"> suspended (8) </button>
+       </div><!-- Search Services -->
+       <div class="mb-4"><input type="text" id="service-search" placeholder="Search services" class="w-full max-w-md px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+       </div><!-- Services Table -->
+       <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div class="px-6 py-3 border-b border-gray-200 bg-gray-50">
+         <div class="flex items-center"><input type="checkbox" id="select-all" class="mr-3 rounded border-gray-300">
+          <div class="grid grid-cols-6 gap-4 w-full text-xs font-medium text-gray-500 uppercase tracking-wider">
+           <div>
+            Service Name
+           </div>
+           <div>
+            Status
+           </div>
+           <div>
+            Runtime
+           </div>
+           <div>
+            Region
+           </div>
+           <div>
+            Updated
+           </div>
+           <div></div>
+          </div>
+         </div>
+        </div>
+        <div id="services-list"><!-- Service rows will be populated by JavaScript -->
+        </div><!-- Selection Actions -->
+        <div id="selection-actions" class="px-6 py-3 border-t border-gray-200 bg-gray-50 hidden">
+         <div class="flex items-center justify-between"><span id="selection-count" class="text-sm text-gray-600">0 services selected:</span>
+          <div class="flex space-x-2"><button class="px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded">Move</button> <button class="px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded">Generate Blueprint</button> <button class="px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded">Resume</button> <button class="px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded">Suspend</button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Blueprints Section -->
+      <div id="blueprints-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Blueprints</h3><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> New Blueprint Instance </button>
+       </div><!-- Empty State -->
+       <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div class="max-w-md mx-auto">
+         <div class="mb-4">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewbox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+         </div>
+         <h4 class="text-lg font-medium text-gray-900 mb-2">You haven't created any Blueprint instances yet.</h4>
+         <p class="text-gray-600 mb-6 leading-relaxed">Use a render.yaml file to define your Render infrastructure-as-code. Create, configure, and connect all of your services in one place, with automatic syncing. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p><button class="bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> New Blueprint Instance </button>
+        </div>
+       </div>
+      </div><!-- Environment Groups Section -->
+      <div id="environment-groups-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Environment Groups</h3><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> New Environment Group </button>
+       </div><!-- Search Environment Groups -->
+       <div class="mb-4"><input type="text" id="env-group-search" placeholder="Search Environment Groups" class="w-full max-w-md px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+       </div><!-- Environment Groups Table -->
+       <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div class="px-6 py-3 border-b border-gray-200 bg-gray-50">
+         <div class="grid grid-cols-5 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <div>
+           Env Group Name
+          </div>
+          <div>
+           Environment
+          </div>
+          <div>
+           Env Vars
+          </div>
+          <div>
+           Secret Files
+          </div>
+          <div>
+           Updated
+          </div>
+         </div>
+        </div>
+        <div id="env-groups-list"><!-- Environment group rows will be populated by JavaScript -->
+        </div>
+       </div>
+      </div><!-- Observability Section -->
+      <div id="observability-section" class="hidden">
+       <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Observability</h3><!-- Table of Contents -->
+        <div class="mb-6">
+         <h4 class="text-sm font-medium text-gray-700 mb-3">Table of contents</h4>
+         <div class="space-y-1"><a href="#metrics-stream" class="block text-sm text-blue-600 hover:text-blue-700">Metrics Stream</a> <a href="#log-streams" class="block text-sm text-blue-600 hover:text-blue-700">Log Streams</a>
+         </div>
+        </div>
+       </div><!-- Metrics Stream Section -->
+       <div id="metrics-stream" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Metrics Stream</h4>
+         <p class="text-gray-600 mb-4">Push OpenTelemetry-formatted service metrics to your observability provider. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p>
+         <div class="mb-4">
+          <h5 class="text-sm font-medium text-gray-700 mb-2">Destination</h5>
+          <p class="text-sm text-gray-600 mb-3">Services in the workspace will push metrics to this destination.</p><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Add destination </button>
+         </div><!-- Pro Upgrade Notice -->
+         <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center">
+           <div class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded mr-3">
+            pro
+           </div><span class="text-sm text-gray-700">Push service metrics to your observability provider with a Professional plan.</span>
+          </div><button class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade </button>
+         </div>
+        </div>
+       </div><!-- Log Streams Section -->
+       <div id="log-streams">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Log Streams</h4>
+         <p class="text-gray-600 mb-6">Forward your Render service logs to a third-party logging provider. These settings apply to all services. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p><!-- Default Destination -->
+         <div class="mb-6">
+          <h5 class="text-sm font-medium text-gray-700 mb-2">Default destination</h5>
+          <p class="text-sm text-gray-600 mb-3">Services in the workspace will forward logs to this destination by default. You can override this per service.</p><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Set default </button>
+         </div><!-- Preview Logs Setting -->
+         <div class="border-t border-gray-200 pt-6">
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">Include logs from preview instances</h5>
+            <p class="text-sm text-gray-600">If you use service previews or preview environments, enable this option to include logs from those test instances in your log stream.</p>
+           </div>
+           <div class="flex items-center space-x-3"><label class="flex items-center"> <input type="checkbox" id="include-preview-logs" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-sm text-gray-700">Include preview logs</span> </label> <button class="text-sm text-blue-600 hover:text-blue-700">Edit</button>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Webhooks Section -->
+      <div id="webhooks-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+         <h3 class="text-lg font-semibold text-gray-900">Webhooks</h3>
+         <div class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">
+          pro
+         </div>
+        </div><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Create Webhook </button>
+       </div><!-- Main Content Card -->
+       <div class="bg-white rounded-lg border border-gray-200 p-8">
+        <div class="text-center max-w-2xl mx-auto">
+         <h4 class="text-xl font-semibold text-gray-900 mb-4">Connect Render events to other services</h4>
+         <p class="text-gray-600 mb-8 leading-relaxed">Webhooks let you connect your Render resources to other tools. Build useful workflows by triggering tools from a variety of Render events.</p><!-- Use Cases -->
+         <div class="space-y-4 mb-8 text-left">
+          <div class="flex items-start space-x-3">
+           <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+           <p class="text-gray-700">When a deploy finishes, trigger a workflow in GitHub Actions.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+           <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+           <p class="text-gray-700">Set up a Discord bot to notify your team if your service is unhealthy.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+           <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+           <p class="text-gray-700">Set up a webhook listener to forward alerts to your monitoring tools.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+           <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+           <p class="text-gray-700">Run Checkly checks after every deployment to uncover issues.</p>
+          </div>
+         </div><!-- Action Buttons -->
+         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center"><button class="bg-purple-600 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade to use webhooks </button> <a href="#" class="text-blue-600 hover:text-blue-700 text-sm font-medium"> Read the docs </a>
+         </div>
+        </div>
+       </div>
+      </div><!-- Notifications Section -->
+      <div id="notifications-section" class="hidden">
+       <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+       </div><!-- Delivery Section -->
+       <div class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-4">Delivery</h4><!-- Notification Destination -->
+         <div class="mb-6">
+          <h5 class="text-sm font-medium text-gray-700 mb-2">Notification Destination</h5>
+          <p class="text-sm text-gray-600 mb-4">Set where notifications will be delivered.</p>
+          <div class="space-y-3"><!-- Email Option -->
+           <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+            <div class="flex items-center space-x-3">
+             <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+             </div><span class="text-sm font-medium text-gray-900">Email</span>
+            </div>
+            <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+             <svg class="w-2 h-2 text-white" fill="currentColor" viewbox="0 0 8 8"><path d="M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z" />
+             </svg>
+            </div>
+           </div><!-- Slack Option -->
+           <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+            <div class="flex items-center space-x-3">
+             <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewbox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" />
+              </svg>
+             </div><span class="text-sm font-medium text-gray-900">Connect Slack</span>
+            </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Connect </button>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div><!-- Default Service Notifications -->
+       <div class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Default Service Notifications</h4>
+         <p class="text-sm text-gray-600 mb-6">Default notification preference for all services. This can be overridden per service.</p>
+         <div class="flex items-center justify-between">
+          <div>
+           <h5 class="text-sm font-medium text-gray-900 mb-1">Only failure notifications</h5>
+           <p class="text-sm text-gray-600">Receive notifications only when services fail or encounter errors.</p>
+          </div>
+          <div class="flex items-center space-x-3"><label class="flex items-center"> <input type="checkbox" id="failure-notifications" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="sr-only">Enable failure notifications</span> </label> <button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Private Links Section -->
+      <div id="private-links-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+         <h3 class="text-lg font-semibold text-gray-900">Private Links</h3><a href="#" class="text-sm text-blue-600 hover:text-blue-700">Read the docs</a>
+        </div><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Create Private Link </button>
+       </div><!-- Main Content Card -->
+       <div class="bg-white rounded-lg border border-gray-200 p-8">
+        <div class="text-center max-w-2xl mx-auto">
+         <h4 class="text-xl font-semibold text-gray-900 mb-4">Securely connect your Render services to AWS-hosted cloud providers.</h4><!-- Feature Description -->
+         <div class="mb-8">
+          <h5 class="text-lg font-medium text-gray-900 mb-4">Connect privately to your external infrastructure</h5>
+          <p class="text-gray-600 mb-6 leading-relaxed">A private link securely connects your Render network to other cloud services, keeping traffic private for enhanced security, better performance, and lower networking costs.</p><a href="#" class="text-blue-600 hover:text-blue-700 text-sm font-medium"> Learn more about private links </a>
+         </div><!-- Pro Upgrade Notice -->
+         <div class="bg-purple-50 border border-purple-200 rounded-lg p-6 flex items-center justify-between">
+          <div class="flex items-center">
+           <div class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded mr-3">
+            pro
+           </div><span class="text-sm text-gray-700">Create private links with a Professional plan.</span>
+          </div><button class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade </button>
+         </div>
+        </div>
+       </div>
+      </div><!-- Billing Section -->
+      <div id="billing-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+         <h3 class="text-lg font-semibold text-gray-900">Billing Information</h3>
+        </div>
+       </div><!-- Table of Contents -->
+       <div class="mb-6">
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Table of contents</h4>
+        <div class="space-y-1"><a href="#plan-section" class="block text-sm text-blue-600 hover:text-blue-700">Plan</a> <a href="#payment-method" class="block text-sm text-blue-600 hover:text-blue-700">Payment Method</a> <a href="#billing-info" class="block text-sm text-blue-600 hover:text-blue-700">Billing Information</a> <a href="#included-usage" class="block text-sm text-blue-600 hover:text-blue-700">Included Usage</a> <a href="#unbilled-charges" class="block text-sm text-blue-600 hover:text-blue-700">Unbilled Charges</a> <a href="#credit-balance" class="block text-sm text-blue-600 hover:text-blue-700">Credit Balance</a> <a href="#invoice-history" class="block text-sm text-blue-600 hover:text-blue-700">Invoice History</a>
+        </div>
+       </div><!-- Plan Section -->
+       <div id="plan-section" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-4">Plan</h4>
+         <div class="mb-6">
+          <h5 class="text-sm font-medium text-gray-700 mb-2">Current Plan</h5>
+          <div class="flex items-center justify-between">
+           <div>
+            <div class="flex items-center space-x-2 mb-1"><span class="text-lg font-semibold text-gray-900">Hobby</span>
+            </div>
+            <p class="text-sm text-gray-600">For hobbyists and students. <a href="#" class="text-blue-600 hover:text-blue-700">Plan Benefits →</a></p>
+           </div><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Update Plan </button>
+          </div>
+         </div>
+        </div>
+       </div><!-- Payment Method Section -->
+       <div id="payment-method" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h4>
+         <div class="flex items-center justify-between">
+          <div>
+           <h5 class="text-sm font-medium text-gray-700 mb-1">Credit Card Brand</h5>
+           <p class="text-sm text-gray-900">Visa ending in 9196</p>
+          </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit payment details </button>
+         </div>
+        </div>
+       </div><!-- Billing Information Section -->
+       <div id="billing-info" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-4">Billing Information</h4>
+         <div class="flex items-center justify-between">
+          <div>
+           <h5 class="text-sm font-medium text-gray-700 mb-1">Additional Information</h5>
+           <p class="text-sm text-gray-600 mb-1">Provide additional billing information such as company name, address, or VAT number.</p>
+           <p class="text-sm text-gray-500">No info provided.</p>
+          </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+         </div>
+        </div>
+       </div><!-- Monthly Included Usage Section -->
+       <div id="included-usage" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Monthly Included Usage</h4>
+         <p class="text-sm text-gray-600 mb-4">Review your included Render usage this month. This applies to the entire workspace.</p>
+         <p class="text-sm text-gray-600 mb-4">You will be charged for usage beyond your included limits. <a href="#" class="text-blue-600 hover:text-blue-700">View pricing</a>.</p><!-- Bandwidth Notice -->
+         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p class="text-sm text-blue-800">Render is tracking new types of bandwidth, lowering bandwidth prices, and providing more visibility into your bandwidth usage. <a href="#" class="text-blue-600 hover:text-blue-700 underline">Read the announcement</a></p>
+         </div><!-- Usage Metrics -->
+         <div class="space-y-6"><!-- Free Instance Hours -->
+          <div>
+           <div class="flex items-center justify-between mb-2">
+            <h5 class="text-sm font-medium text-gray-700">Free Instance Hours</h5><span class="text-sm text-gray-600">0 hours / 750 hours</span>
+           </div>
+           <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+           </div>
+          </div><!-- Included Bandwidth -->
+          <div>
+           <div class="flex items-center justify-between mb-2">
+            <h5 class="text-sm font-medium text-gray-700">Included Bandwidth</h5><span class="text-sm text-gray-600">0.00 GB / 100 GB</span>
+           </div>
+           <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+           </div><!-- Bandwidth Breakdown -->
+           <div class="ml-4 space-y-2 text-sm text-gray-600">
+            <div class="flex justify-between"><span>Service-Initiated</span> <span>0.00 GB</span>
+            </div>
+            <div class="flex justify-between"><span>HTTP Responses</span> <span>0 MB</span>
+            </div>
+            <div class="flex justify-between"><span>WebSocket Responses</span> <span>0 MB</span>
+            </div>
+            <div class="flex justify-between"><span>Service-Initiated (Private Link)</span> <span>0 MB</span>
+            </div>
+           </div>
+          </div><!-- Pipeline Minutes -->
+          <div>
+           <div class="flex items-center justify-between mb-2">
+            <h5 class="text-sm font-medium text-gray-700">Included Pipeline Minutes</h5><span class="text-sm text-gray-600">0 min / 500 min</span>
+           </div>
+           <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+           </div><a href="#" class="text-sm text-blue-600 hover:text-blue-700">Manage spend on pipeline minutes.</a>
+          </div>
+         </div>
+        </div>
+       </div><!-- Unbilled Charges Section -->
+       <div id="unbilled-charges" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Unbilled Charges</h4>
+         <p class="text-sm text-gray-600 mb-4">Amounts displayed have been accrued within the month to date.</p>
+         <div class="mb-4"><button class="text-sm text-blue-600 hover:text-blue-700 font-medium">Expand All</button>
+         </div><!-- Charges Breakdown -->
+         <div class="space-y-4">
+          <div class="flex items-center justify-between py-2 border-b border-gray-100"><span class="text-sm font-medium text-gray-700">Services</span> <span class="text-sm text-gray-900">$0.00</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-gray-100"><span class="text-sm font-medium text-gray-700">Pipeline Minutes</span> <span class="text-sm text-gray-900">$0.00</span>
+          </div>
+         </div><!-- Totals -->
+         <div class="mt-6 pt-4 border-t border-gray-200">
+          <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-gray-900">Total month to date</span> <span class="text-sm font-semibold text-gray-900">$0.00 USD</span>
+          </div>
+          <div class="flex items-center justify-between mb-4"><span class="text-sm font-medium text-gray-900">Projected total for October</span> <span class="text-sm font-semibold text-gray-900">$0.00 USD</span>
+          </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Download as CSV </button>
+         </div>
+        </div>
+       </div><!-- Credit Balance Section -->
+       <div id="credit-balance" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Credit Balance</h4>
+         <p class="text-sm text-gray-600 mb-4">The balance will be applied to the amount due on your next invoice.</p>
+         <div class="mb-6">
+          <div class="flex items-center justify-between mb-4"><span class="text-sm font-medium text-gray-700">Total balance</span> <span class="text-lg font-semibold text-gray-900">$0.00</span>
+          </div>
+         </div><!-- Promo Code -->
+         <div>
+          <h5 class="text-sm font-medium text-gray-700 mb-2">Promo code</h5>
+          <div class="flex space-x-2"><input type="text" placeholder="Enter promo code" class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Apply </button>
+          </div>
+         </div>
+        </div>
+       </div><!-- Invoice History Section -->
+       <div id="invoice-history">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Invoice History</h4>
+         <p class="text-sm text-gray-600 mb-6">View or download your past invoices.</p><!-- Invoice Table -->
+         <div class="overflow-hidden">
+          <div class="px-0 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+           <div class="grid grid-cols-5 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div>
+             Date
+            </div>
+            <div>
+             2
+            </div>
+            <div>
+             Status
+            </div>
+            <div>
+             Total
+            </div>
+            <div>
+             Applied Credits
+            </div>
+            <div>
+             Billed Total
+            </div>
+           </div>
+          </div><!-- Empty State -->
+          <div class="px-0 py-8 text-center">
+           <p class="text-sm text-gray-500">No invoices found.</p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Changelog Section -->
+      <div id="changelog-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Changelog</h3>
+        <div class="flex items-center space-x-3">
+         <div class="relative"><input type="text" placeholder="Search Changelog..." class="w-64 pl-3 pr-8 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <svg class="absolute right-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+         </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium">Filters</button>
+        </div>
+       </div><!-- Changelog Entries -->
+       <div class="space-y-6"><!-- MCP Server Entry -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+           <div class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
+            New
+           </div>
+           <h4 class="text-lg font-semibold text-gray-900">Render MCP server is now generally available</h4>
+          </div><span class="text-sm text-gray-500">August 20, 2025</span>
+         </div>
+         <div class="mb-4">
+          <p class="text-gray-700 mb-4">The official <a href="#" class="text-blue-600 hover:text-blue-700">Render MCP server</a> is now generally available. By connecting AI applications like Cursor and Claude Code, you can manage and inspect your Render infrastructure using natural language:</p>
+          <div class="bg-gray-50 rounded-lg p-4 mb-4">
+           <p class="text-sm text-gray-600 italic">Debug your Render services in Claude Code and Cursor.</p>
+           <p class="text-sm text-blue-600 mt-2">Try Render MCP</p>
+          </div>
+         </div>
+        </div><!-- Bulk Suspend Entry -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+           <div class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+            Feature
+           </div>
+           <h4 class="text-lg font-semibold text-gray-900">Bulk suspend and resume actions</h4>
+          </div><span class="text-sm text-gray-500">August 15, 2025</span>
+         </div>
+         <div class="mb-4">
+          <p class="text-gray-700 mb-4">You can now suspend multiple services at once from the services list. Select the services you want to suspend and click "Suspend" in the action menu:</p>
+          <div class="bg-gray-50 rounded-lg p-4 mb-4">
+           <div class="text-sm text-gray-600 mb-2"><strong>Suspending multiple services in the Render Dashboard</strong>
+           </div>
+           <div class="h-32 bg-gray-200 rounded border-2 border-dashed border-gray-300 flex items-center justify-center"><span class="text-gray-500 text-sm">Dashboard Screenshot</span>
+           </div>
+          </div>
+          <p class="text-gray-700 mb-4">You can resume multiple suspended services the same way by clicking Resume in the action menu:</p>
+          <div class="bg-gray-50 rounded-lg p-4">
+           <div class="text-sm text-gray-600 mb-2"><strong>Resuming multiple suspended services in the Render Dashboard</strong>
+           </div>
+           <div class="h-32 bg-gray-200 rounded border-2 border-dashed border-gray-300 flex items-center justify-center"><span class="text-gray-500 text-sm">Dashboard Screenshot</span>
+           </div>
+          </div>
+         </div>
+        </div><!-- Key Value Suspend Entry -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+           <div class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">
+            Update
+           </div>
+           <h4 class="text-lg font-semibold text-gray-900">Key Value instances can now be suspended</h4>
+          </div><span class="text-sm text-gray-500">August 10, 2025</span>
+         </div>
+         <div class="mb-4">
+          <p class="text-gray-700 mb-4">You can now suspend Key Value instances to save costs when they're not in use:</p>
+          <div class="bg-gray-50 rounded-lg p-4 mb-4">
+           <div class="text-sm text-gray-600 mb-2"><strong>Suspending a Key Value instance in the Render Dashboard</strong>
+           </div>
+           <div class="h-32 bg-gray-200 rounded border-2 border-dashed border-gray-300 flex items-center justify-center"><span class="text-gray-500 text-sm">Dashboard Screenshot</span>
+           </div>
+          </div>
+          <p class="text-gray-700 mb-2">You can also include Key Value instances in newly supported <a href="#" class="text-blue-600 hover:text-blue-700">bulk suspend actions</a>.</p>
+          <p class="text-gray-700">Paid Key Value instances include disk-backed persistence, and they retain their state on disk while suspended. Free Key Value instances do not include persistence, and their state is lost upon suspension.</p>
+         </div>
+        </div><!-- IP Rules Entry -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+           <div class="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded">
+            Security
+           </div>
+           <h4 class="text-lg font-semibold text-gray-900">Inbound IP rules for web services and environments</h4>
+          </div><span class="text-sm text-gray-500">August 5, 2025</span>
+         </div>
+         <div class="mb-4">
+          <p class="text-gray-700 mb-4">You can now restrict inbound traffic to your services using IP allowlists. Set IP rules for:</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+           <li>Individual web services and static sites</li>
+           <li>An entire environment</li>
+           <li>An entire workspace</li>
+          </ul>
+          <p class="text-gray-700 mb-4">IP rules are allowlists of IP ranges specified using CIDR notation. Add rules from your service or environment's settings in the Render Dashboard:</p>
+          <div class="bg-gray-50 rounded-lg p-4 mb-4">
+           <div class="text-sm text-gray-600 mb-2"><strong>Setting a web service's inbound IP rules in the Render Dashboard</strong>
+           </div>
+           <div class="h-32 bg-gray-200 rounded border-2 border-dashed border-gray-300 flex items-center justify-center"><span class="text-gray-500 text-sm">Dashboard Screenshot</span>
+           </div>
+          </div>
+          <p class="text-gray-700 mb-4">Requests to your service from a disallowed IP receive a 403 Forbidden response.</p>
+          <p class="text-gray-700">All plan types support setting inbound IP rules for individual <a href="#" class="text-blue-600 hover:text-blue-700">Render Postgres</a> and <a href="#" class="text-blue-600 hover:text-blue-700">Key Value</a> datastores (this is existing functionality).</p>
+          <p class="text-gray-700 mt-2">Learn more about IP rules in the <a href="#" class="text-blue-600 hover:text-blue-700">documentation</a>.</p>
+         </div>
+        </div><!-- Edge Caching Entry -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+           <div class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
+            Performance
+           </div>
+           <h4 class="text-lg font-semibold text-gray-900">Enhanced edge caching options</h4>
+          </div><span class="text-sm text-gray-500">July 30, 2025</span>
+         </div>
+         <div class="mb-4">
+          <p class="text-gray-700 mb-4">You choose which set of Cacheable File Types to allow when you enable edge caching:</p>
+          <div class="bg-gray-50 rounded-lg p-4 mb-4">
+           <div class="text-sm text-gray-600 mb-2"><strong>Enabling edge caching for all file types in the Render Dashboard</strong>
+           </div>
+           <div class="h-32 bg-gray-200 rounded border-2 border-dashed border-gray-300 flex items-center justify-center"><span class="text-gray-500 text-sm">Dashboard Screenshot</span>
+           </div>
+          </div>
+          <p class="text-gray-700 mb-4">Caching all file types increases the risk of caching dynamic content. To prevent this, make sure to set proper <a href="#" class="text-blue-600 hover:text-blue-700">Cache-Control headers</a> for all of your service's dynamic responses before enabling this option.</p>
+          <p class="text-gray-700">Learn more about edge caching in the <a href="#" class="text-blue-600 hover:text-blue-700">documentation</a>.</p>
+         </div>
+        </div><!-- Blueprints Entry -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+           <div class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+            Infrastructure
+           </div>
+           <h4 class="text-lg font-semibold text-gray-900">Defining a project with two environments using Render Blueprints</h4>
+          </div><span class="text-sm text-gray-500">July 25, 2025</span>
+         </div>
+         <div class="mb-4">
+          <p class="text-gray-700 mb-4">Your render.yaml file now supports two new top-level fields:</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+           <li><strong>projects</strong>: an array of project definitions, each with one or more environments and their associated resources</li>
+           <li><strong>ungrouped</strong>: an object for defining resources that belong to no environment</li>
+          </ul>
+          <p class="text-gray-700 mb-4">If you define a resource under one of these new fields, do not duplicate it in your file's top-level services / databases / envVarGroups fields. These fields remain supported, and resources in them keep their currently assigned environment (if any).</p>
+          <p class="text-gray-700">Learn more about Blueprint support for projects and environments in the <a href="#" class="text-blue-600 hover:text-blue-700">documentation</a>.</p>
+         </div>
+        </div>
+       </div><!-- Load More Button -->
+       <div class="text-center mt-8"><button class="bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Load More </button>
+       </div>
+      </div><!-- Contact Support Section -->
+      <div id="contact-support-section" class="hidden">
+       <div class="max-w-4xl mx-auto"><!-- Header -->
+        <div class="text-center mb-8">
+         <div class="flex items-center justify-center mb-4">
+          <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+           </svg>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-900">Render</h1>
+         </div>
+         <h2 class="text-3xl font-bold text-gray-900 mb-2">Hi there 👋</h2>
+         <p class="text-xl text-gray-600">How can we help?</p>
+        </div><!-- Main Content -->
+        <div class="grid md:grid-cols-2 gap-8"><!-- Send Message Section -->
+         <div class="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+           <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+           </svg> Send us a message</h3>
+          <form id="support-form" class="space-y-4"><!-- Subject -->
+           <div><label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label> <input type="text" id="subject" name="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Brief description of your issue">
+           </div><!-- Message -->
+           <div><label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label> <textarea id="message" name="message" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" placeholder="Describe your issue in detail..."></textarea>
+           </div><!-- File Upload Area -->
+           <div><label class="block text-sm font-medium text-gray-700 mb-2">Attachments</label>
+            <div id="file-drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
+             <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+             </svg>
+             <p class="text-sm text-gray-600 mb-1">Drop files or images here</p>
+             <p class="text-xs text-gray-500">They'll be added to your conversation</p><input type="file" id="file-input" class="hidden" multiple accept="image/*,.pdf,.txt,.log">
+            </div><!-- File List -->
+            <div id="file-list" class="mt-3 space-y-2 hidden"><!-- Files will be listed here -->
+            </div>
+           </div><!-- Priority -->
+           <div><label for="priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label> <select id="priority" name="priority" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <option value="low">Low - General question</option> <option value="normal" selected>Normal - Issue affecting work</option> <option value="high">High - Service disruption</option> <option value="urgent">Urgent - Complete outage</option> </select>
+           </div><!-- Submit Button --> <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"> Send Message </button>
+          </form>
+         </div><!-- Documentation Section -->
+         <div class="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+           <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+           </svg> Documentation</h3>
+          <p class="text-gray-600 mb-6">Find answers to common questions and learn how to use Render effectively.</p><!-- Quick Links -->
+          <div class="space-y-3"><a href="#" class="block p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex items-center justify-between">
+             <div>
+              <h4 class="text-sm font-medium text-gray-900">Getting Started</h4>
+              <p class="text-xs text-gray-600">Deploy your first service</p>
+             </div>
+             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+             </svg>
+            </div></a> <a href="#" class="block p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex items-center justify-between">
+             <div>
+              <h4 class="text-sm font-medium text-gray-900">Troubleshooting</h4>
+              <p class="text-xs text-gray-600">Common issues and solutions</p>
+             </div>
+             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+             </svg>
+            </div></a> <a href="#" class="block p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex items-center justify-between">
+             <div>
+              <h4 class="text-sm font-medium text-gray-900">API Reference</h4>
+              <p class="text-xs text-gray-600">Complete API documentation</p>
+             </div>
+             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+             </svg>
+            </div></a> <a href="#" class="block p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex items-center justify-between">
+             <div>
+              <h4 class="text-sm font-medium text-gray-900">Billing &amp; Plans</h4>
+              <p class="text-xs text-gray-600">Pricing and billing information</p>
+             </div>
+             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+             </svg>
+            </div></a>
+          </div><!-- Search Documentation -->
+          <div class="mt-6 pt-6 border-t border-gray-200">
+           <div class="relative"><input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+           </div>
+          </div>
+         </div>
+        </div><!-- Recent Messages -->
+        <div class="mt-8">
+         <div class="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+           <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+           </svg> Messages</h3><!-- Empty State -->
+          <div class="text-center py-8">
+           <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+           </svg>
+           <h4 class="text-lg font-medium text-gray-900 mb-2">No messages yet</h4>
+           <p class="text-gray-600 mb-4">Your support conversations will appear here once you send your first message.</p><button onclick="document.getElementById('subject').focus()" class="text-blue-600 hover:text-blue-700 text-sm font-medium"> Send your first message → </button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Settings Section -->
+      <div id="settings-section" class="hidden">
+       <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+         <h3 class="text-lg font-semibold text-gray-900">Workspace settings</h3>
+         <div class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded">
+          hobby
+         </div>
+        </div>
+       </div><!-- Workspace ID -->
+       <div class="mb-6">
+        <div class="text-sm text-gray-600"><span class="font-medium">Workspace ID:</span> <span class="font-mono">tea-d2j2s0umcj7s73eioiq0</span>
+        </div>
+       </div><!-- Table of Contents -->
+       <div class="mb-6">
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Table of contents</h4>
+        <div class="space-y-1"><a href="#general-settings" class="block text-sm text-blue-600 hover:text-blue-700">General</a> <a href="#team-members" class="block text-sm text-blue-600 hover:text-blue-700">Team Members</a> <a href="#build-pipeline" class="block text-sm text-blue-600 hover:text-blue-700">Build Pipeline</a> <a href="#deploy-policy" class="block text-sm text-blue-600 hover:text-blue-700">Deploy Policy</a> <a href="#registry-credentials" class="block text-sm text-blue-600 hover:text-blue-700">Registry Credentials</a> <a href="#security-settings" class="block text-sm text-blue-600 hover:text-blue-700">Security</a> <a href="#compliance-settings" class="block text-sm text-blue-600 hover:text-blue-700">Compliance</a> <a href="#delete-workspace" class="block text-sm text-blue-600 hover:text-blue-700">Delete Workspace</a>
+        </div>
+       </div><!-- General Settings -->
+       <div id="general-settings" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-6">General</h4><!-- Name -->
+         <div class="mb-6">
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">Name</h5>
+            <p class="text-sm text-gray-900">My Workspace</p>
+           </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+          </div>
+         </div><!-- Email -->
+         <div class="mb-6">
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">Email</h5>
+            <p class="text-sm text-gray-600 mb-1">Email address for workspace updates, such as system notifications.</p>
+            <p class="text-sm text-gray-900">edgarpogosyan55@gmail.com</p>
+           </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+          </div>
+         </div><!-- Avatar -->
+         <div class="mb-6">
+          <div class="flex items-center justify-between">
+           <div class="flex items-center space-x-3">
+            <div>
+             <h5 class="text-sm font-medium text-gray-700 mb-1">Avatar</h5>
+            </div>
+            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+             K
+            </div>
+           </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+          </div>
+         </div><!-- Plan -->
+         <div>
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">Plan</h5>
+            <div class="flex items-center space-x-2 mb-1"><span class="text-sm font-semibold text-gray-900">Hobby</span>
+            </div>
+            <p class="text-sm text-gray-600">For hobbyists and students. <a href="#" class="text-blue-600 hover:text-blue-700">Plan Benefits →</a></p>
+           </div><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Update Plan </button>
+          </div>
+         </div>
+        </div>
+       </div><!-- Team Members -->
+       <div id="team-members" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Team Members</h4>
+         <p class="text-sm text-gray-600 mb-6">Add team members to collaborate in your Render workspace. Optionally specify member roles to enhance security. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p><!-- Search Members -->
+         <div class="mb-4"><input type="text" placeholder="Search members" class="w-full max-w-md px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+         </div><!-- Members Table -->
+         <div class="overflow-hidden border border-gray-200 rounded-lg mb-4">
+          <div class="px-6 py-3 border-b border-gray-200 bg-gray-50">
+           <div class="grid grid-cols-3 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div>
+             Member email
+            </div>
+            <div>
+             1
+            </div>
+            <div>
+             Role
+            </div>
+           </div>
+          </div>
+          <div class="px-6 py-4">
+           <div class="grid grid-cols-3 gap-4 items-center">
+            <div>
+             <div class="text-sm font-medium text-gray-900">
+              edgarpogosyan55@gmail.com
+             </div>
+             <div class="text-xs text-gray-500">
+              (you)
+             </div>
+            </div>
+            <div class="text-sm text-gray-600">
+             e
+            </div>
+            <div class="text-sm text-gray-900">
+             Admin
+            </div>
+           </div>
+          </div>
+         </div><!-- Pro Upgrade Notice -->
+         <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center">
+           <div class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded mr-3">
+            pro
+           </div><span class="text-sm text-gray-700">Collaborate with up to 10 team members by upgrading to the Professional plan.</span>
+          </div><button class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade </button>
+         </div>
+        </div>
+       </div><!-- Build Pipeline -->
+       <div id="build-pipeline" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Build Pipeline</h4>
+         <p class="text-sm text-gray-600 mb-6">Choose compute specs for your builds and other pre-deploy tasks. Purchased minutes expire at the end of each month and are not transferable between tiers.</p><!-- Build Pipeline Tier -->
+         <div class="mb-6">
+          <h5 class="text-sm font-medium text-gray-700 mb-4">Build pipeline tier</h5><!-- Starter Tier -->
+          <div class="border border-gray-200 rounded-lg p-4 mb-3">
+           <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2"><input type="radio" name="build-tier" id="starter-tier" class="text-blue-600 focus:ring-blue-500" checked> <label for="starter-tier" class="text-sm font-medium text-gray-900">Starter</label>
+            </div><span class="text-sm font-medium text-gray-900">$5 / 1,000 min</span>
+           </div>
+           <div class="ml-6 text-sm text-gray-600">
+            <div>
+             2 CPU
+            </div>
+            <div>
+             8 GB RAM
+            </div>
+            <div class="text-green-600 font-medium">
+             Includes 500 free minutes
+            </div>
+           </div>
+          </div><!-- Performance Tier -->
+          <div class="border border-gray-200 rounded-lg p-4 opacity-60">
+           <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2"><input type="radio" name="build-tier" id="performance-tier" class="text-blue-600 focus:ring-blue-500" disabled> <label for="performance-tier" class="text-sm font-medium text-gray-900">Performance</label>
+            </div><span class="text-sm font-medium text-gray-900">$25 / 1,000 min</span>
+           </div>
+           <div class="ml-6 text-sm text-gray-600">
+            <div>
+             16 CPU
+            </div>
+            <div>
+             64 GB RAM
+            </div>
+            <div class="text-purple-600 font-medium">
+             Requires a Professional plan or higher. Upgrade your plan
+            </div>
+           </div>
+          </div>
+         </div><!-- Monthly Spend Limit -->
+         <div>
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">$0 monthly spend limit</h5>
+            <p class="text-sm text-gray-600">If you reach this limit and run out of minutes, builds and other pre-deploy tasks stop running.</p>
+           </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+          </div>
+         </div>
+        </div>
+       </div><!-- Deploy Policy -->
+       <div id="deploy-policy" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Overlapping Deploy Policy</h4>
+         <p class="text-sm text-gray-600 mb-6">Specify what happens to an in-progress deploy whenever a new deploy is triggered for the same service. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p>
+         <div class="flex items-center justify-between">
+          <div>
+           <h5 class="text-sm font-medium text-gray-700 mb-3">Select an overlapping deploy policy</h5><!-- Override Option -->
+           <div class="mb-3"><label class="flex items-start space-x-3"> <input type="radio" name="deploy-policy" value="override" class="mt-1 text-blue-600 focus:ring-blue-500">
+             <div>
+              <div class="text-sm font-medium text-gray-900">
+               Override
+              </div>
+              <div class="text-sm text-gray-600">
+               Immediately cancel the in-progress deploy and start the new one.
+              </div>
+             </div></label>
+           </div><!-- Wait Option -->
+           <div><label class="flex items-start space-x-3"> <input type="radio" name="deploy-policy" value="wait" class="mt-1 text-blue-600 focus:ring-blue-500">
+             <div>
+              <div class="text-sm font-medium text-gray-900">
+               Wait
+              </div>
+              <div class="text-sm text-gray-600">
+               Let the in-progress deploy finish, then start the most recent one (skip all deploys in between).
+              </div>
+             </div></label>
+           </div>
+          </div><button class="text-sm text-blue-600 hover:text-blue-700 font-medium"> Edit </button>
+         </div>
+        </div>
+       </div><!-- Registry Credentials -->
+       <div id="registry-credentials" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Container Registry Credentials</h4>
+         <p class="text-sm text-gray-600 mb-6">Store registry credentials to pull and deploy private images. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p>
+         <div class="flex items-center justify-between">
+          <div>
+           <p class="text-sm text-gray-500">No added credentials.</p>
+          </div><button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"> Add Credential </button>
+         </div>
+        </div>
+       </div><!-- Security -->
+       <div id="security-settings" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Security</h4>
+         <p class="text-sm text-gray-600 mb-6">Require additional security measures for all team members in this workspace.</p><!-- Two-Factor Authentication -->
+         <div class="mb-6">
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">Enforce Two-Factor Authentication</h5>
+            <p class="text-sm text-gray-600">Secure your team by requiring a second form of authentication to sign in.</p>
+           </div>
+           <div class="flex items-center space-x-3"><span class="text-sm text-gray-500">Not enforced</span> <label class="flex items-center"> <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="sr-only">Enforce Two-Factor Authentication</span> </label>
+           </div>
+          </div>
+         </div><!-- Single Sign-On -->
+         <div class="mb-6">
+          <div class="flex items-center justify-between">
+           <div>
+            <h5 class="text-sm font-medium text-gray-700 mb-1">Enforce Single Sign-On with Google</h5>
+           </div>
+           <div class="flex items-center space-x-3"><span class="text-sm text-gray-500">Not enforced</span> <label class="flex items-center"> <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="sr-only">Enforce Single Sign-On with Google</span> </label>
+           </div>
+          </div>
+         </div><!-- Pro Upgrade Notice -->
+         <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center">
+           <div class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded mr-3">
+            pro
+           </div><span class="text-sm text-gray-700">Security features require a Professional plan or above plan to enable</span>
+          </div><button class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade </button>
+         </div>
+        </div>
+       </div><!-- Compliance -->
+       <div id="compliance-settings" class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+         <h4 class="text-lg font-semibold text-gray-900 mb-2">Compliance</h4>
+         <p class="text-sm text-gray-600 mb-6">Ensure compliance with security and regulatory requirements for your workspace.</p><!-- HIPAA Compliance -->
+         <div class="mb-6">
+          <h5 class="text-sm font-medium text-gray-700 mb-2">HIPAA Compliance</h5>
+          <p class="text-sm text-gray-600 mb-4">When enabled, Render enforces additional security policies and operational controls in your workspace. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p>
+          <div class="flex items-center justify-between mb-4">
+           <div><span class="text-sm font-medium text-gray-900">HIPAA Compliance</span>
+            <div class="text-sm text-gray-500">
+             Disabled
+            </div>
+           </div><label class="flex items-center"> <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="sr-only">Enable HIPAA Compliance</span> </label>
+          </div>
+          <p class="text-sm text-gray-600">Enable HIPAA Compliance to process protected health information (PHI) in your workspace.</p>
+         </div><!-- Audit Logs -->
+         <div class="mb-6">
+          <h5 class="text-sm font-medium text-gray-700 mb-2">Audit Logs</h5>
+          <p class="text-sm text-gray-600 mb-4">Render logs material actions taken by members of your organization. You can export this log as a CSV file. <a href="#" class="text-blue-600 hover:text-blue-700">Learn more</a>.</p>
+          <p class="text-sm text-gray-600 mb-4">Audit logs are only available for Organization and Enterprise plans.</p>
+         </div><!-- Organization Upgrade Notice -->
+         <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center">
+           <div class="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded mr-3">
+            org
+           </div><span class="text-sm text-gray-700">Compliance features require an Organization or Enterprise plan to enable</span>
+          </div><button class="bg-orange-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-orange-700 transition-colors"> Upgrade </button>
+         </div>
+        </div>
+       </div><!-- Delete Workspace -->
+       <div id="delete-workspace">
+        <div class="bg-white rounded-lg border border-red-200 p-6">
+         <h4 class="text-lg font-semibold text-red-900 mb-2">Delete Workspace</h4>
+         <p class="text-sm text-gray-600 mb-6">Permanently delete this workspace and all of its data. This action cannot be undone.</p><button class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"> Delete Workspace </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Upgrade Modal -->
+  <div id="upgrade-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+   <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+     <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">Upgrade to Pro</h3><button id="close-modal" class="text-gray-400 hover:text-gray-600">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="space-y-4 mb-6">
+      <div class="flex items-center justify-between py-2 border-b border-gray-100"><span class="text-sm text-gray-600">Team size</span> <span class="text-sm font-medium text-gray-900">110 seats</span>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-gray-100"><span class="text-sm text-gray-600">Custom domains</span> <span class="text-sm font-medium text-gray-900">Unlimited</span>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-gray-100"><span class="text-sm text-gray-600">Horizontal autoscaling</span> <span class="text-sm font-medium text-green-600">Included</span>
+      </div>
+     </div>
+     <div class="flex space-x-3"><button class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors"> View Plans </button> <button class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"> Upgrade to Pro </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+        // Sample services data
+        const services = [
+            { id: 'richlab-1', name: 'RichLAb-1', status: 'failed', runtime: 'Node', region: 'oregon', updated: '1d', active: false },
+            { id: 'uuui77-1', name: 'uuui77-1', status: 'deployed', runtime: 'Python 3', region: 'oregon', updated: '19d', active: true },
+            { id: 'webapp-2', name: 'webapp-2', status: 'deployed', runtime: 'Node', region: 'oregon', updated: '3d', active: true },
+            { id: 'api-service', name: 'api-service', status: 'failed', runtime: 'Python 3', region: 'oregon', updated: '5d', active: false },
+            { id: 'frontend-app', name: 'frontend-app', status: 'suspended', runtime: 'Node', region: 'oregon', updated: '7d', active: false },
+            { id: 'backend-api', name: 'backend-api', status: 'suspended', runtime: 'Python 3', region: 'oregon', updated: '10d', active: false },
+            { id: 'worker-1', name: 'worker-1', status: 'suspended', runtime: 'Node', region: 'oregon', updated: '12d', active: false },
+            { id: 'database-proxy', name: 'database-proxy', status: 'suspended', runtime: 'Python 3', region: 'oregon', updated: '15d', active: false },
+            { id: 'cache-service', name: 'cache-service', status: 'suspended', runtime: 'Node', region: 'oregon', updated: '18d', active: false },
+            { id: 'auth-service', name: 'auth-service', status: 'suspended', runtime: 'Python 3', region: 'oregon', updated: '20d', active: false }
+        ];
+
+        // Sample environment groups data
+        const environmentGroups = [
+            { id: 'prod-config', name: 'Production Config', environment: 'Production', envVars: 12, secretFiles: 3, updated: '2d' },
+            { id: 'staging-vars', name: 'Staging Variables', environment: 'Staging', envVars: 8, secretFiles: 1, updated: '5d' },
+            { id: 'dev-settings', name: 'Development Settings', environment: 'Development', envVars: 15, secretFiles: 2, updated: '1d' },
+            { id: 'api-keys', name: 'API Keys', environment: 'Production', envVars: 6, secretFiles: 4, updated: '3d' },
+            { id: 'database-config', name: 'Database Config', environment: 'Production', envVars: 4, secretFiles: 1, updated: '7d' }
+        ];
+
+        let currentFilter = 'all';
+        let selectedServices = new Set();
+
+        // Default config
+        const defaultConfig = {
+            workspace_name: "SkyStack",
+            welcome_message: "Get organized with Projects"
+        };
+
+        // Element SDK implementation
+        const element = {
+            defaultConfig,
+            onConfigChange: async (config) => {
+                document.getElementById('workspace-title').textContent = config.workspace_name || defaultConfig.workspace_name;
+                document.getElementById('welcome-message').textContent = config.welcome_message || defaultConfig.welcome_message;
+            },
+            mapToCapabilities: (config) => ({
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            }),
+            mapToEditPanelValues: (config) => new Map([
+                ["workspace_name", config.workspace_name || defaultConfig.workspace_name],
+                ["welcome_message", config.welcome_message || defaultConfig.welcome_message]
+            ])
+        };
+
+        // Initialize Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init(element);
+        }
+
+        function renderServices() {
+            const servicesList = document.getElementById('services-list');
+            const searchTerm = document.getElementById('service-search').value.toLowerCase();
+            
+            let filteredServices = services.filter(service => {
+                const matchesSearch = service.name.toLowerCase().includes(searchTerm);
+                const matchesFilter = currentFilter === 'all' || 
+                    (currentFilter === 'active' && service.active) ||
+                    (currentFilter === 'suspended' && !service.active);
+                return matchesSearch && matchesFilter;
+            });
+
+            servicesList.innerHTML = filteredServices.map(service => `
+                <div class="service-row px-6 py-4 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center">
+                        <input type="checkbox" class="service-checkbox mr-3 rounded border-gray-300" data-service-id="${service.id}">
+                        <div class="grid grid-cols-6 gap-4 w-full">
+                            <div class="text-sm font-medium text-gray-900">${service.name}</div>
+                            <div class="status-badge status-${service.status}">
+                                <span class="status-dot"></span>
+                                <span class="text-sm text-gray-600 capitalize">${service.status === 'failed' ? 'Failed deploy' : service.status === 'deployed' ? 'Deployed' : 'Suspended'}</span>
+                            </div>
+                            <div class="text-sm text-gray-600">${service.runtime}</div>
+                            <div class="text-sm text-gray-600">${service.region}</div>
+                            <div class="text-sm text-gray-600">${service.updated}</div>
+                            <div>
+                                <button class="text-sm text-gray-400 hover:text-gray-600">Options</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.service-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleServiceSelection);
+            });
+        }
+
+        function renderEnvironmentGroups() {
+            const envGroupsList = document.getElementById('env-groups-list');
+            const searchTerm = document.getElementById('env-group-search') ? document.getElementById('env-group-search').value.toLowerCase() : '';
+            
+            let filteredGroups = environmentGroups.filter(group => {
+                return group.name.toLowerCase().includes(searchTerm) || 
+                       group.environment.toLowerCase().includes(searchTerm);
+            });
+
+            envGroupsList.innerHTML = filteredGroups.map(group => `
+                <div class="px-6 py-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
+                    <div class="grid grid-cols-5 gap-4">
+                        <div class="text-sm font-medium text-gray-900">${group.name}</div>
+                        <div class="text-sm text-gray-600">${group.environment}</div>
+                        <div class="text-sm text-gray-600">${group.envVars}</div>
+                        <div class="text-sm text-gray-600">${group.secretFiles}</div>
+                        <div class="text-sm text-gray-600">${group.updated}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleServiceSelection(event) {
+            const serviceId = event.target.dataset.serviceId;
+            if (event.target.checked) {
+                selectedServices.add(serviceId);
+            } else {
+                selectedServices.delete(serviceId);
+            }
+            updateSelectionUI();
+        }
+
+        function updateSelectionUI() {
+            const selectionActions = document.getElementById('selection-actions');
+            const selectionCount = document.getElementById('selection-count');
+            const selectAllCheckbox = document.getElementById('select-all');
+
+            if (selectedServices.size > 0) {
+                selectionActions.classList.remove('hidden');
+                selectionCount.textContent = `${selectedServices.size} services selected:`;
+            } else {
+                selectionActions.classList.add('hidden');
+            }
+
+            // Update select all checkbox state
+            const visibleCheckboxes = document.querySelectorAll('.service-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.service-checkbox:checked');
+            
+            if (checkedCheckboxes.length === 0) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            } else if (checkedCheckboxes.length === visibleCheckboxes.length) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+
+        // Navigation functionality
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('services-section').classList.add('hidden');
+            document.getElementById('blueprints-section').classList.add('hidden');
+            document.getElementById('environment-groups-section').classList.add('hidden');
+            document.getElementById('observability-section').classList.add('hidden');
+            document.getElementById('webhooks-section').classList.add('hidden');
+            document.getElementById('notifications-section').classList.add('hidden');
+            document.getElementById('private-links-section').classList.add('hidden');
+            document.getElementById('billing-section').classList.add('hidden');
+            document.getElementById('settings-section').classList.add('hidden');
+            document.getElementById('changelog-section').classList.add('hidden');
+            document.getElementById('contact-support-section').classList.add('hidden');
+            
+            // Show selected section
+            if (sectionName === 'blueprints') {
+                document.getElementById('blueprints-section').classList.remove('hidden');
+            } else if (sectionName === 'environment-groups') {
+                document.getElementById('environment-groups-section').classList.remove('hidden');
+                renderEnvironmentGroups();
+            } else if (sectionName === 'observability') {
+                document.getElementById('observability-section').classList.remove('hidden');
+            } else if (sectionName === 'webhooks') {
+                document.getElementById('webhooks-section').classList.remove('hidden');
+            } else if (sectionName === 'notifications') {
+                document.getElementById('notifications-section').classList.remove('hidden');
+            } else if (sectionName === 'private-links') {
+                document.getElementById('private-links-section').classList.remove('hidden');
+            } else if (sectionName === 'billing') {
+                document.getElementById('billing-section').classList.remove('hidden');
+            } else if (sectionName === 'settings') {
+                document.getElementById('settings-section').classList.remove('hidden');
+            } else if (sectionName === 'changelog') {
+                document.getElementById('changelog-section').classList.remove('hidden');
+            } else if (sectionName === 'contact-support') {
+                document.getElementById('contact-support-section').classList.remove('hidden');
+            } else {
+                document.getElementById('services-section').classList.remove('hidden');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('select-all').addEventListener('change', function(event) {
+            const checkboxes = document.querySelectorAll('.service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = event.target.checked;
+                const serviceId = checkbox.dataset.serviceId;
+                if (event.target.checked) {
+                    selectedServices.add(serviceId);
+                } else {
+                    selectedServices.delete(serviceId);
+                }
+            });
+            updateSelectionUI();
+        });
+
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                selectedServices.clear();
+                renderServices();
+                updateSelectionUI();
+            });
+        });
+
+        document.getElementById('service-search').addEventListener('input', function() {
+            selectedServices.clear();
+            renderServices();
+            updateSelectionUI();
+        });
+
+        // Environment Groups search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener for environment groups search when the element exists
+            const envGroupSearch = document.getElementById('env-group-search');
+            if (envGroupSearch) {
+                envGroupSearch.addEventListener('input', renderEnvironmentGroups);
+            }
+        });
+
+        // Navigation event listeners
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const section = this.dataset.section;
+                showSection(section);
+            });
+        });
+
+        // Dropdown functionality
+        const newButton = document.getElementById('new-button');
+        const newDropdown = document.getElementById('new-dropdown');
+
+        newButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            newDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!newButton.contains(event.target) && !newDropdown.contains(event.target)) {
+                newDropdown.classList.add('hidden');
+            }
+        });
+
+        // Close dropdown when clicking on an option
+        newDropdown.addEventListener('click', function(event) {
+            if (event.target.tagName === 'A') {
+                event.preventDefault();
+                newDropdown.classList.add('hidden');
+                
+                // Handle service creation
+                const serviceType = event.target.textContent.trim();
+                createNewService(serviceType);
+            }
+        });
+
+        // Function to create new service
+        function createNewService(serviceType) {
+            // Generate a unique ID for the new service
+            const serviceId = `${serviceType.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+            
+            // Determine runtime based on service type
+            let runtime = 'Node';
+            if (serviceType === 'Background Worker' || serviceType === 'Cron Job') {
+                runtime = 'Python 3';
+            } else if (serviceType === 'Postgres' || serviceType === 'Key Value') {
+                runtime = 'Database';
+            }
+            
+            // Create new service object
+            const newService = {
+                id: serviceId,
+                name: serviceId,
+                status: 'deployed',
+                runtime: runtime,
+                region: 'oregon',
+                updated: 'now',
+                active: true
+            };
+            
+            // Add to services array
+            services.unshift(newService);
+            
+            // Re-render services list
+            renderServices();
+            
+            // Show success message
+            showNotification(`${serviceType} created successfully!`);
+        }
+
+        // Function to show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full';
+            notification.textContent = message;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Upgrade modal functionality
+        const upgradeButton = document.getElementById('upgrade-button');
+        const upgradeModal = document.getElementById('upgrade-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        upgradeButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            upgradeModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', function(event) {
+            event.preventDefault();
+            upgradeModal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        upgradeModal.addEventListener('click', function(event) {
+            if (event.target === upgradeModal) {
+                upgradeModal.classList.add('hidden');
+            }
+        });
+
+        // Support form functionality
+        const supportForm = document.getElementById('support-form');
+        const fileDropZone = document.getElementById('file-drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        let attachedFiles = [];
+
+        // File upload functionality
+        fileDropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.add('border-blue-400', 'bg-blue-50');
+        });
+
+        fileDropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.remove('border-blue-400', 'bg-blue-50');
+        });
+
+        fileDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.remove('border-blue-400', 'bg-blue-50');
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    showNotification('File size must be less than 10MB', 'error');
+                    return;
+                }
+                attachedFiles.push(file);
+            });
+            updateFileList();
+        }
+
+        function updateFileList() {
+            if (attachedFiles.length === 0) {
+                fileList.classList.add('hidden');
+                return;
+            }
+
+            fileList.classList.remove('hidden');
+            fileList.innerHTML = attachedFiles.map((file, index) => `
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="text-sm text-gray-700">${file.name}</span>
+                        <span class="text-xs text-gray-500">(${(file.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                    <button type="button" onclick="removeFile(${index})" class="text-red-500 hover:text-red-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.removeFile = function(index) {
+            attachedFiles.splice(index, 1);
+            updateFileList();
+        };
+
+        // Support form submission
+        if (supportForm) {
+            supportForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const subject = formData.get('subject');
+                const message = formData.get('message');
+                const priority = formData.get('priority');
+
+                if (!subject.trim() || !message.trim()) {
+                    showNotification('Please fill in both subject and message fields', 'error');
+                    return;
+                }
+
+                // Simulate form submission
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Sending...';
+                submitButton.disabled = true;
+
+                setTimeout(() => {
+                    showNotification('Your message has been sent! We\'ll get back to you soon.', 'success');
+                    this.reset();
+                    attachedFiles = [];
+                    updateFileList();
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }, 2000);
+            });
+        }
+
+        // Enhanced notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
+            notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Initial render
+        renderServices();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'996ebfc662eef5c3',t:'MTc2MTg2NzUzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
