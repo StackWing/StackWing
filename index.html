@@ -52,15 +52,15 @@
             font-size: 1rem;
         }
         .btn-primary {
-            background: #6366f1;
+            background: #adadae;
             color: white;
         }
         .btn-primary:hover {
-            background: #4f46e5;
+            background: #a0a0a3;
         }
         .btn-outline {
             background: transparent;
-            border: 2px solid #475569;
+            border: 2px solid #1c1f23;
             color: #f1f5f9;
         }
         .btn-outline:hover {
@@ -107,7 +107,7 @@
             left: 0;
             right: 0;
             background: #000000;
-            border-top: 1px solid #c6ccd4;
+            border-top: 1px solid #ffffff;
             padding: 0.5rem;
             display: flex;
             overflow-x: auto;
@@ -124,7 +124,7 @@
             font-size: 0.875rem;
         }
         .nav-item.active {
-            background: #6366f1;
+            background: #000000;
             color: white;
         }
         .nav-item:not(.active) {
@@ -1066,16 +1066,16 @@
                             Հրավեր
                         </div>
                         <div className={`nav-item ${activeTab === 'profit' ? 'active' : ''}`} onClick={() => setActiveTab('profit')}>
-                            Մեծ շահույթ
+                         🎁  Մեծ շահույթ
                         </div>
                         <div className={`nav-item ${activeTab === 'tasks' ? 'active' : ''}`} onClick={() => setActiveTab('tasks')}>
-                            Առաջադրանքներ
+                          🛋  Առաջադրանքներ
                         </div>
                         <div className={`nav-item ${activeTab === 'videos' ? 'active' : ''}`} onClick={() => setActiveTab('videos')}>
-                            Տեսանյութ
+                          📱  Տեսանյութ
                         </div>
                         <div className={`nav-item ${activeTab === 'daily' ? 'active' : ''}`} onClick={() => setActiveTab('daily')}>
-                            Ամենօրյա
+                          🎈  Ամենօրյա
                         </div>
                         <div className={`nav-item ${activeTab === 'transfer' ? 'active' : ''}`} onClick={() => setActiveTab('transfer')}>
                             Փոխանցում
@@ -1297,3 +1297,4 @@
     </script>
 </body>
 </html>
+
